@@ -22,10 +22,10 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(10, 0), LocalTime.of(13, 0), 2000);
         mealsTo.forEach(System.out::println);
 
-        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        System.out.println(filteredByStreams(meals, LocalTime.of(10, 0), LocalTime.of(13, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -37,7 +37,7 @@ public class UserMealsUtil {
         List<UserMealWithExcess> filteredList = new ArrayList<>();
         for (UserMeal meal : meals
         ) {
-            if (meal.getDateTime().toLocalTime().isAfter(startTime) && meal.getDateTime().toLocalTime().isBefore(endTime)) {
+            if (meal.getDateTime().toLocalTime().compareTo(startTime) >= 0 && meal.getDateTime().toLocalTime().compareTo(endTime) <= 0) {
                 boolean excess = map.get(meal.getDateTime().toLocalDate()) > caloriesPerDay;
                 filteredList.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess)
                 );
@@ -57,8 +57,8 @@ public class UserMealsUtil {
                 );
         return meals
                 .stream()
-                .filter(u -> u.getDateTime().toLocalTime().isAfter(startTime)
-                        && u.getDateTime().toLocalTime().isBefore(endTime))
+                .filter(u -> u.getDateTime().toLocalTime().compareTo(startTime) >= 0
+                        && u.getDateTime().toLocalTime().compareTo(endTime) <= 0)
                 .map(u -> new UserMealWithExcess(u.getDateTime(), u.getDescription(), u.getCalories(),
                         map.getOrDefault(u.getDateTime().toLocalDate(), 0) > caloriesPerDay))
                 .collect(Collectors.toList()
