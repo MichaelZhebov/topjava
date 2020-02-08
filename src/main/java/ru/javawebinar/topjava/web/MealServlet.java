@@ -24,6 +24,5 @@ public class MealServlet extends HttpServlet {
         List<MealTo> mealsTo = MealsUtil.filteredByStreams(MealList.getInstance().getMeals(), LocalTime.MIN,LocalTime.MAX,2000);
         request.setAttribute("meals", mealsTo);
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
-
     }
 }

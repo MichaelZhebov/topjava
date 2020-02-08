@@ -5,6 +5,7 @@
 <html>
 <head>
     <style><%@include file="/WEB-INF/css/meals.css"%></style>
+    <meta charset="UTF-8">
     <title>Meals</title>
 </head>
 <body>
@@ -13,17 +14,23 @@
 <h2>Meals</h2>
 <table>
     <thead>
+    <th>Id</th>
     <th>Data</th>
     <th>Description</th>
     <th>Calories</th>
+    <th colspan=2>Actions</th>
     </thead>
     <c:forEach var="meal" items="${meals}">
         <tr class="${meal.excess ? 'red' : 'green'}">
-            <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))}</td>
+            <td>${meal.id}</td>
+            <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
+            <td><a href="meals?action=edit&mealId=${meal.id}">Update</a></td>
+            <td><a href="meals?action=delete&mealId=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
+<p><a href="meals?action=insert">Add Meal</a></p>
 </body>
 </html>

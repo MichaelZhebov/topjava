@@ -7,22 +7,21 @@
     <display-name>Topjava</display-name>
 
     <servlet>
-        <servlet-name>userServlet</servlet-name>
+        <servlet-name>UserServlet</servlet-name>
         <servlet-class>ru.javawebinar.topjava.web.UserServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>userServlet</servlet-name>
+        <servlet-name>UserServlet</servlet-name>
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
-
     <servlet>
-        <servlet-name>mealServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealServlet</servlet-class>
+        <servlet-name>MealController</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealController</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>mealServlet</servlet-name>
+        <servlet-name>MealController</servlet-name>
         <url-pattern>/meals</url-pattern>
     </servlet-mapping>
 </web-app>
