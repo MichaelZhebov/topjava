@@ -45,10 +45,8 @@ public class MealServlet extends HttpServlet {
                 case "delete": {
                     int mealId = Integer.parseInt(request.getParameter("mealId"));
                     mealDao.delete(mealId);
-                    log.debug("meal with id " + mealId + " deleted");
-                    List<MealTo> mealsTo = MealsUtil.filteredByStreams(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-                    request.setAttribute("meals", mealsTo);
-                    response.sendRedirect(request.getContextPath() + "/meals");
+                    log.debug("meal deleted");
+                    response.sendRedirect("meals");
                     return;
                 }
                 case "edit": {
@@ -65,10 +63,8 @@ public class MealServlet extends HttpServlet {
                     break;
                 }
                 default: {
-                    List<MealTo> mealsTo = MealsUtil.filteredByStreams(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-                    request.setAttribute("meals", mealsTo);
                     log.debug("bad action parameter, redirect to meals");
-                    response.sendRedirect(request.getContextPath() + "/meals");
+                    response.sendRedirect("meals");
                     return;
                 }
             }
@@ -79,20 +75,16 @@ public class MealServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
-        log.debug("redirect to meals");
-        Meal meal = new Meal();
-        meal.setDateTime(LocalDateTime.parse(request.getParameter("date")));
-        meal.setDescription(request.getParameter("desc"));
-        meal.setCalories(Integer.parseInt(request.getParameter("calories")));
         String mealId = request.getParameter("mealId");
         if (mealId == null || mealId.isEmpty()) {
+            log.debug("meal added");
+            Meal meal = new Meal(LocalDateTime.parse(request.getParameter("date")),request.getParameter("desc"),Integer.parseInt(request.getParameter("calories")));
             mealDao.add(meal);
         } else {
-            meal.setId(Integer.parseInt(mealId));
+            log.debug("meal updated");
+            Meal meal = new Meal(Integer.parseInt(mealId),LocalDateTime.parse(request.getParameter("date")),request.getParameter("desc"),Integer.parseInt(request.getParameter("calories")));
             mealDao.update(meal);
         }
-        List<MealTo> mealsTo = MealsUtil.filteredByStreams(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-        request.setAttribute("meals", mealsTo);
-        response.sendRedirect(request.getContextPath() + "/meals");
+        response.sendRedirect("meals");
     }
 }
