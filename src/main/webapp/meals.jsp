@@ -21,7 +21,7 @@
     </thead>
     <c:forEach var="meal" items="${meals}">
         <tr class="${meal.excess ? 'red' : 'green'}">
-            <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
+            <td>${requestScope.dateTimeFormatter.format(meal.dateTime)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="meals?action=edit&mealId=${meal.id}">Update</a></td>

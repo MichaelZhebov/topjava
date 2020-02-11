@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -25,6 +26,8 @@ public class MealServlet extends HttpServlet {
     private static String INSERT_OR_EDIT = "/meal.jsp";
     private static String LIST_USER = "/meals.jsp";
     private MealDao mealDao;
+
+    private final static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Override
     public void init() throws ServletException {
@@ -39,6 +42,7 @@ public class MealServlet extends HttpServlet {
             log.debug("redirect to meals");
             forward = LIST_USER;
             List<MealTo> mealsTo = MealsUtil.filteredByStreams(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
+            request.setAttribute("dateTimeFormatter", dateTimeFormatter);
             request.setAttribute("meals", mealsTo);
         } else {
             switch (action) {
