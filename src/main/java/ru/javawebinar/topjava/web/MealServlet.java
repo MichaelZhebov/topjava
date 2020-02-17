@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -24,8 +22,8 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
-    ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-    MealRestController mealRestController;
+    private ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+    private MealRestController mealRestController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -44,16 +42,17 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         if (request.getParameter("action") != null && request.getParameter("action").equals("filter")) {
-            LocalDate startDate = request.getParameter("fromDate").equals("") ? LocalDate.MIN : LocalDate.parse(request.getParameter("fromDate"));
-            LocalDate endDate = request.getParameter("toDate").equals("") ? LocalDate.MAX : LocalDate.parse(request.getParameter("toDate"));
-            LocalTime startTime = request.getParameter("fromTime").equals("") ? LocalTime.MIN : LocalTime.parse(request.getParameter("fromTime"));
-            LocalTime endTime = request.getParameter("toTime").equals("") ? LocalTime.MAX : LocalTime.parse(request.getParameter("toTime"));
-            request.setAttribute("meals", mealRestController.getFiltered(startDate, endDate, startTime, endTime));
+            request.setAttribute("meals", mealRestController.getFiltered(
+                    request.getParameter("fromDate"),
+                    request.getParameter("toDate"),
+                    request.getParameter("fromTime"),
+                    request.getParameter("toTime")));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
+            return;
         }
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                authUserId(),
+                null,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));

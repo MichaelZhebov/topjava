@@ -7,7 +7,8 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.UsersUtil;
 
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +22,7 @@ public class InMemoryUserRepository implements UserRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        UsersUtil.getSorted().forEach(this::save);
+        UsersUtil.USERS.forEach(this::save);
     }
 
     @Override
@@ -39,7 +40,10 @@ public class InMemoryUserRepository implements UserRepository {
             return user;
         }
         // handle case: update, but not present in storage
-        return repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
+        if (getAll().contains(user)) {
+            return repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
+        }
+        return null;
     }
 
     @Override
@@ -49,9 +53,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Collection<User> getAll() {
+    public List<User> getAll() {
         log.info("getAll");
-        return repository.values();
+        return repository.values().stream()
+                .sorted(Comparator.comparing(User::getName).thenComparing(User::getEmail))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -59,6 +65,6 @@ public class InMemoryUserRepository implements UserRepository {
         log.info("getByEmail {}", email);
         return repository.values().stream()
                 .filter(user -> user.getEmail().equals(email))
-                .collect(Collectors.toList()).get(0);
+                .findFirst().orElse(null);
     }
 }
