@@ -4,17 +4,12 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenDateTime;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -39,7 +34,11 @@ public class MealService {
     }
 
     public List<MealTo> getAll(Integer userId) {
-        return MealsUtil.getTos(repository.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return getTos(repository.getAll(userId), DEFAULT_CALORIES_PER_DAY);
+    }
+
+    public List<MealTo> getBetweenDate(LocalDate startDate, LocalDate endDate, Integer userId) {
+        return getTos(repository.getBetweenDate(startDate, endDate, userId), DEFAULT_CALORIES_PER_DAY);
     }
 
     public void update(Meal meal, Integer userId) {

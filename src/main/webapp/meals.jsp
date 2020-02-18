@@ -25,13 +25,13 @@
     <br><br>
     <form method="post" action="meals?action=filter">
         <label for="fromDate">From Date</label>
-        <input type="date" id="fromDate" name="fromDate" value='<%=request.getParameter("fromDate")%>'>
+        <input type="date" id="fromDate" name="fromDate" value=${param.fromDate}>
         <label for="toDate">To Date</label>
-        <input type="date" id="toDate" name="toDate" value='<%=request.getParameter("toDate")%>'>
+        <input type="date" id="toDate" name="toDate" value=${param.toDate}>
         <label for="fromTime">From Time</label>
-        <input type="time" id="fromTime" name="fromTime" value='<%=request.getParameter("fromTime")%>'>
+        <input type="time" id="fromTime" name="fromTime" value=${param.fromTime}>
         <label for="toTime">To Time</label>
-        <input type="time" id="toTime" name="toTime" value='<%=request.getParameter("toTime")%>'>
+        <input type="time" id="toTime" name="toTime" value=${param.toTime}>
         <input type="submit" value="Filter">
         <input type="button" value="Clear" onclick="location.href='meals'">
     </form>
