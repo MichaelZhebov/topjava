@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenDate;
@@ -40,7 +41,10 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         // handle case: update, but not present in storage
-        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        if (repository.get(userId) != null) {
+            return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        }
+        return null;
     }
 
     @Override
@@ -52,14 +56,18 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int id, Integer userId) {
         log.info("get {}", id);
-        return repository.get(userId).get(id);
+        if (repository.get(userId) != null) {
+            return repository.get(userId).get(id);
+        }
+        return null;
     }
 
     @Override
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(Predicate<Meal> filter, Integer userId) {
         log.info("getAll");
         Map<Integer, Meal> meals = repository.get(userId);
         return meals == null ? Collections.emptyList() : meals.values().stream()
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
@@ -67,9 +75,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getBetweenDate(LocalDate startDate, LocalDate endDate, Integer userId) {
         log.info("get between date");
-        return getAll(userId).stream()
-                .filter(meal -> isBetweenDate(meal.getDateTime(), startDate, endDate))
-                .collect(Collectors.toList());
+        return getAll(meal -> isBetweenDate(meal.getDateTime(), startDate, endDate), userId);
     }
 }
 
