@@ -10,15 +10,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.Util;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -59,7 +55,7 @@ public class MealServiceTest {
     @Test
     public void duplicateDateCreateByAnotherUser() {
         Meal newMeal = getNew();
-        newMeal.setDateTime(of(2020, Month.FEBRUARY, 20, 19, 0));
+        newMeal.setDateTime(MEAL_USER_1.getDateTime());
         Meal created = mealService.create(newMeal, ADMIN_ID);
         Integer newId = created.getId();
         newMeal.setId(newId);
@@ -83,8 +79,8 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = mealService.get(MEAL1.getId(), USER_ID);
-        assertMatch(meal, MEAL1);
+        Meal meal = mealService.get(MEAL_USER_1.getId(), USER_ID);
+        assertMatch(meal, MEAL_USER_1);
     }
 
     @Test(expected = NotFoundException.class)
@@ -92,10 +88,11 @@ public class MealServiceTest {
         mealService.get(100, USER_ID);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void delete() {
-        mealService.delete(MEAL1.getId(), USER_ID);
-        mealService.get(MEAL1.getId(), USER_ID);
+        mealService.delete(MEAL_USER_1.getId(), USER_ID);
+        List<Meal> meals = mealService.getAll(USER_ID);
+        assertMatch(meals, MEAL_USER_5, MEAL_USER_4, MEAL_USER_3, MEAL_USER_2);
     }
 
     @Test(expected = NotFoundException.class)
@@ -109,21 +106,13 @@ public class MealServiceTest {
                 LocalDate.of(2020, Month.FEBRUARY, 21),
                 LocalDate.of(2020, Month.FEBRUARY, 25),
                 USER_ID);
-        List<Meal> mealListExists = Stream.of(MEAL1, MEAL2, MEAL3, MEAL7, MEAL8)
-                .filter(meal -> Util.isBetweenHalfOpen(meal.getDate(), LocalDate.of(2020, Month.FEBRUARY, 21),
-                        LocalDate.of(2020, Month.FEBRUARY, 25)))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
-        assertMatch(mealList, mealListExists);
+        assertMatch(mealList, MEAL_USER_5, MEAL_USER_4);
     }
 
     @Test
     public void getAll() {
         List<Meal> mealList = mealService.getAll(USER_ID);
-        List<Meal> mealListExists = Stream.of(MEAL1, MEAL2, MEAL3, MEAL7, MEAL8)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
-        assertMatch(mealList, mealListExists);
+        assertMatch(mealList, MEAL_USER_5, MEAL_USER_4, MEAL_USER_3, MEAL_USER_2, MEAL_USER_1);
     }
 
 
