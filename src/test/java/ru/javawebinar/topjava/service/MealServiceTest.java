@@ -16,8 +16,9 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 
 @ContextConfiguration({
@@ -49,7 +50,7 @@ public class MealServiceTest {
 
     @Test(expected = DataAccessException.class)
     public void duplicateDateCreateBySameUser() {
-        mealService.create(new Meal(null, of(2020, Month.FEBRUARY, 20, 7, 30), "duplicate", 1000), USER_ID);
+        mealService.create(new Meal(null, MEAL_USER_5.getDateTime(), "duplicate", 1000), USER_ID);
     }
 
     @Test
