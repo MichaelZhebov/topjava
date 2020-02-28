@@ -1,9 +1,11 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.ExternalResource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,6 +37,14 @@ public class MealServiceTest {
 
     @Rule
     public MyJUnitStopWatch timeRule = new MyJUnitStopWatch();
+
+    @ClassRule
+    public static final ExternalResource resource = new ExternalResource() {
+        @Override
+        protected void after() {
+            MyJUnitStopWatch.methodsResults.forEach((k,v) -> System.out.println("The test " + k + " lasted: " + v + " ms"));
+        }
+    };
 
     private void ruleNotFoundException() {
         exceptionRule.expect(NotFoundException.class);
