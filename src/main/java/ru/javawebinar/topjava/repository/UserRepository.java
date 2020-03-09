@@ -19,5 +19,7 @@ public interface UserRepository {
 
     List<User> getAll();
 
-    User getWithMeal(int userId);
+    default User getWithMeal(int userId) {
+        return null;
+    }
 }

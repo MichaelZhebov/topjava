@@ -82,6 +82,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void getAll() throws Exception {
         List<User> all = service.getAll();
+        all.remove(USER_WO_MEALS);
         USER_MATCHER.assertMatch(all, ADMIN, USER);
     }
 

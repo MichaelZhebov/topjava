@@ -4,8 +4,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 
 import static ru.javawebinar.topjava.Profiles.JPA;
-import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 
-@ActiveProfiles({POSTGRES_DB, JPA})
+@ActiveProfiles(JPA)
 public class UserServiceJpaTest extends AbstractUserServiceTest {
 }
