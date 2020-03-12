@@ -7,7 +7,6 @@ import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -54,12 +53,6 @@ public class UserService {
     }
 
     public User getWithMeal(int id) {
-        checkNotFoundWithId(repository.get(id), id);
-        User userWithMeals = repository.getWithMeal(id);
-        if (userWithMeals == null) {
-            userWithMeals = get(id);
-            userWithMeals.setMeals(Collections.emptyList());
-        }
-        return userWithMeals;
+        return checkNotFoundWithId(repository.getWithMeal(id), id);
     }
 }
