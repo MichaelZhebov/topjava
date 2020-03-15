@@ -16,7 +16,6 @@ import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assume.assumeFalse;
 import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
 
 @ContextConfiguration({
@@ -35,11 +34,10 @@ abstract public class AbstractServiceTest {
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
     @Autowired
-    private Environment environment;
+    protected Environment environment;
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
     public <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
-        assumeFalse(environment.acceptsProfiles("jdbc"));
         assertThrows(exceptionClass, () -> {
             try {
                 runnable.run();

@@ -29,7 +29,7 @@ public class JspMealController {
     private MealRestController mealController;
 
     @GetMapping()
-    public String getMeals(Model model,
+    public String getAll(Model model,
                            @RequestParam(name = "startDate") @Nullable String sDate,
                            @RequestParam(name = "endDate") @Nullable String eDate,
                            @RequestParam(name = "startTime") @Nullable String sTime,
@@ -42,33 +42,34 @@ public class JspMealController {
         return "meals";
     }
 
-    @GetMapping("set")
-    public String setMeal(Model model, @RequestParam(name = "id", required = false) Integer id) {
-        Meal meal;
-        if (id == null) {
-            meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
-        } else {
-            meal = mealController.get(id);
-        }
+    @GetMapping("create")
+    public String сreate(Model model) {
+        Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @GetMapping("delete")
-    public String deleteMeals(@RequestParam(name = "id") int id) {
-        mealController.delete(id);
+    @PostMapping("create")
+    public String create(HttpServletRequest request) {
+        mealController.create(get(request));
         return "redirect:/meals";
     }
 
-    @PostMapping("create")
-    public String createMeal(HttpServletRequest request) {
-        mealController.create(getMeal(request));
-        return "redirect:/meals";
+    @GetMapping("update")
+    public String update(Model model, @RequestParam(name = "id") Integer id) {
+        model.addAttribute("meal", mealController.get(id));
+        return "mealForm";
     }
 
     @PostMapping("update")
-    public String updateMeal(HttpServletRequest request) {
-        mealController.update(getMeal(request), getId(request));
+    public String update(HttpServletRequest request) {
+        mealController.update(get(request), getId(request));
+        return "redirect:/meals";
+    }
+
+    @GetMapping("delete")
+    public String delete(@RequestParam(name = "id") int id) {
+        mealController.delete(id);
         return "redirect:/meals";
     }
 
@@ -77,7 +78,7 @@ public class JspMealController {
         return Integer.parseInt(paramId);
     }
 
-    private Meal getMeal(HttpServletRequest request) {
+    private Meal get(HttpServletRequest request) {
         return new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
