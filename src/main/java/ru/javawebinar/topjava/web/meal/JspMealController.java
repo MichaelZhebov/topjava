@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -49,12 +48,6 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @PostMapping("create")
-    public String create(HttpServletRequest request) {
-        mealController.create(get(request));
-        return "redirect:/meals";
-    }
-
     @GetMapping("update")
     public String update(Model model, @RequestParam(name = "id") Integer id) {
         model.addAttribute("meal", mealController.get(id));
@@ -62,8 +55,12 @@ public class JspMealController {
     }
 
     @PostMapping("update")
-    public String update(HttpServletRequest request) {
-        mealController.update(get(request), getId(request));
+    public String updateOrCreate(HttpServletRequest request) {
+        if (request.getParameter("id") != "") {
+            mealController.update(get(request), getId(request));
+        } else {
+            mealController.create(get(request));
+        }
         return "redirect:/meals";
     }
 

@@ -13,17 +13,8 @@
 <section>
     <hr>
     <jsp:useBean id="meal" class="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <c:choose>
-        <c:when test="${meal.id == null}">
-            <h2><spring:message code="meal.create"/></h2>
-            <c:set var="formAction" value="create" />
-        </c:when>
-        <c:otherwise>
-            <h2><spring:message code="meal.edit"/></h2>
-            <c:set var="formAction" value="update" />
-        </c:otherwise>
-    </c:choose>
-    <form method="post" action="${formAction}">
+    <h2><spring:message code="${meal.id == null ? 'meal.create' : 'meal.edit'}"/></h2>
+    <form method="post" action="update">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.dateTime"/>:</dt>
