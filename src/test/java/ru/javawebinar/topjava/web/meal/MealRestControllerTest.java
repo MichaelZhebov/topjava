@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
@@ -22,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
+import static ru.javawebinar.topjava.UserTestData.USER;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.util.MealsUtil.createTo;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
@@ -76,19 +76,20 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        List<MealTo> expectedMealsTo = getTos(MealTestData.MEALS, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        List<MealTo> expectedMealsTo = getTos(MealTestData.MEALS, USER.getCaloriesPerDay());
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(expectedMealsTo));
+                .andExpect(content().string(JsonUtil.writeValue(expectedMealsTo)));
     }
 
     @Test
     void getFiltered() throws Exception {
+        List<MealTo> expectedMealsTo = List.of(createTo(MEAL6, true), createTo(MEAL2, false));
         perform(MockMvcRequestBuilders.get(REST_URL + "filter?start=2020-01-30T12:15:00&end=2020-01-31T19:15:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(createTo(MEAL6, true), createTo(MEAL2, false)));
+                .andExpect(content().string(JsonUtil.writeValue(expectedMealsTo)));
     }
 }
